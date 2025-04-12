@@ -37,9 +37,6 @@ export type AgentState = "preconnected" | "connecting" | "connected" | "disconne
 export default function Voice() {
     // AUTH 
     const router = useRouter();
-    const [ user, setUser ] = useState<User | null>(null)
-    const [ token, setToken ] = useState('')
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
     // Timer
     const waitTime = Number(process.env.NEXT_PUBLIC_INTERVIEW_TIME)
     const [time, setTime] = useState(waitTime); 
@@ -57,20 +54,6 @@ export default function Voice() {
     const [ userUnpaid, setUserUnpaid ] = useState(false);
     const [ visaType, setVisaType]  = useState('F1 Visa')
     
-    // supabase user initialization
-    useEffect(() => {
-        const supabase = createClient();
-        supabase.auth.getSession().then(({ data: {session } , error }) => {
-            if (error || !session?.user) {
-            router.replace("/sign-in"); 
-            } else {
-            setUser(session.user)
-            setToken(session.access_token)
-            setIsAuthenticated(true)
-            }
-        });
-        return () => resetVariables();
-    }, []);
 
     useEffect(() => {
         if(agentState === 'preconnected') {
@@ -85,39 +68,11 @@ export default function Voice() {
             startTimer();
         }
         if(agentState === 'disconnected') {
-            setAssesmentData();
+            // setAssesmentData();
         }
 
     }, [agentState]);
 
-    async function setAssesmentData() {
-        setAssesment(null)
-        let msgCombine = "";
-        messages.forEach((msg) => {
-            msgCombine += "{ 'Speaker': '" + msg.type + "', 'Says' : '" + msg.transcript + "' } ";
-        })
-        try{
-            const response = await fetch('/api/score/', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'text/plain'
-                },
-                body: 'This is the conversation:  ' + msgCombine,
-            })
-            const message = await response.json()
-            if(message.message === 'notpaid') {
-                setUserUnpaid(true)
-                return;
-            }
-            const feedback = VisaInterviewFeedback.parse(message);
-            setAssesment(feedback)
-            setMessages([]);
-            }
-            catch(e) {
-            console.log("Error in fetching score: ", e)
-        }
-    }
 
     const startTimer = () => {
         if (timerRef.current || time<0) return;
@@ -161,7 +116,7 @@ export default function Voice() {
     };
     
     function endSession() {
-        setAgentState("disconnected");
+        setAgentState("preconnected");
         resetVariables();
         resetTimer();
     }
@@ -256,7 +211,6 @@ export default function Voice() {
             const tokenResponse = await fetch("/api/openai-session", { 
                 method: "POST",
                 headers: {
-                    "Authorization": `Bearer ${token}`,
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({ visaType }),
@@ -339,98 +293,61 @@ export default function Voice() {
         }
     }, [messages]);
 
-    if(!isAuthenticated) {
-        return (
-            <div className="flex justify-center items-center h-screen w-full">
-            <h1> Loading... </h1>
-            </div>
-            
-        )
-    }
-
     return (
-        <div className="landing-page w-full h-screen">
-            
-        {/* NAVBAR */}
-        <div className="flex justify-center w-full px-2">
-            <div className="flex flex-row w-full max-w-7xl justify-between items-center gap-3 p-3 bg-white bg-opacity-50 shadow-2xl rounded-xl mt-2 "> 
-                <a href="/" className="flex items-center font-extrabold italic text-2xl"> 
-                    <Image 
-                        src='/images/headerImg.png'
-                        alt="Logo"
-                        width={40}
-                        height={40}
-                        className="mr-1"
-                    />
-                    Visa<div className="text-blue-500">Prep</div>AI 
-                </a>
-                <div className="flex flex-row gap-2">
-                    {user && <UserDropdown/> }
-                </div>
-            </div>
-        </div>
-        
-        <div className="flex flex-col items-center gap-4 p-3 mt-4">
-            
-            <CircleOut stream={stream}/>
-            
-            {/* Control Buttons */}
-            {
-                agentState === "preconnected" && (
-                    <div className="flex flex-row items-center gap-3">
-                        <Button 
-                            className={`connect-button uppercase border border-gray-500 [box-shadow:0.0rem_0.25rem_#000] ${false? 'translate-x-[+0.25rem] translate-y-[+0.25rem] [box-shadow:0.0rem_0.0rem_#000] bg-blue-600': 'bg-blue-500'} hover:bg-blue-600`}
-                            onClick={init}>
-                            Start Interview
-                        </Button>
-                        <VisaTypeSelector type={visaType} setVisaType={setVisaType}/>
-                    </div>
-                )
-            }
-            {
+        <div className=" w-full h-screen">   
+            <div className="flex flex-col items-center gap-4 p-3 mt-4">
                 
-                agentState === "connecting" && (
-                    <div>
-                        <DotPulse color="#1E88E5" />
-                    </div>
-                )
-            }
-            {
-                agentState === "connected" && (
-                    <div className="flex flex-row gap-2 items-center justify-center">
-                        <Button className=" bg-red-500" onClick={endSession}>
-                            Disconnect
-                        </Button>
-                        {formatTime(time)}
-                    </div>
-                )
-            }
-            
-            {/* Messages */}
-            <div className="overflow-y-auto h-96 max-w-2xl w-full bg-white bg-opacity-30 shadow-2xl p-4 mt-2 rounded-lg">
-                <div className="">
-                    {messages.map((m) => (
-                        <div className={`flex flex-col  gap-1 border-b-2 p-3`} key={m.event_id}>
-                            <h3 className={`text-lg ${m.type == 'Agent'? 'text-red-600 ': 'text-black text-right'}`}>{m.type} Message</h3>
-                            <p className={`flex text-gray-600 italic ${m.type == 'Agent'? '': 'text-right justify-end '}`}>{ m.transcript || <DotStream color="#1E88E5"/>}</p>
-                            <div className={`w-full `}></div>
+                <CircleOut stream={stream}/>
+                
+                {/* Control Buttons */}
+                {
+                    agentState === "preconnected" && (
+                        <div className="flex flex-row items-center gap-3">
+                            <Button 
+                                className={`connect-button uppercase border border-gray-500 [box-shadow:0.0rem_0.25rem_#000] ${false? 'translate-x-[+0.25rem] translate-y-[+0.25rem] [box-shadow:0.0rem_0.0rem_#000] bg-blue-600': 'bg-blue-500'} hover:bg-blue-600`}
+                                onClick={init}>
+                                Start Interview
+                            </Button>
+                            <VisaTypeSelector type={visaType} setVisaType={setVisaType}/>
                         </div>
-                    ))}
-                    <div ref={messagesEndRef} />
+                    )
+                }
+                {
+                    
+                    agentState === "connecting" && (
+                        <div>
+                            <DotPulse color="#1E88E5" />
+                        </div>
+                    )
+                }
+                {
+                    agentState === "connected" && (
+                        <div className="flex flex-row gap-2 items-center justify-center">
+                            <Button className=" bg-red-500" onClick={endSession}>
+                                Disconnect
+                            </Button>
+                            {formatTime(time)}
+                        </div>
+                    )
+                }
+                
+                {/* Messages */}
+                <div className="overflow-y-auto h-96 max-w-2xl w-full bg-white bg-opacity-30 shadow-2xl p-4 mt-2 rounded-lg">
+                    <div className="">
+                        {messages.map((m) => (
+                            <div className={`flex flex-col  gap-1 border-b-2 p-3`} key={m.event_id}>
+                                <h3 className={`text-lg ${m.type == 'Agent'? 'text-red-600 ': 'text-black text-right'}`}>{m.type} Message</h3>
+                                <p className={`flex text-gray-600 italic ${m.type == 'Agent'? '': 'text-right justify-end '}`}>{ m.transcript || <DotStream color="#1E88E5"/>}</p>
+                                <div className={`w-full `}></div>
+                            </div>
+                        ))}
+                        <div ref={messagesEndRef} />
+                    </div>
                 </div>
+                
+                <audio ref={audioRef} autoPlay />
+                <audio ref={endAudioRef} src="/assets/aivoice.mp3"/>
             </div>
-            
-            <audio ref={audioRef} autoPlay />
-            <audio ref={endAudioRef} src="/assets/aivoice.mp3"/>
-        </div>
-
-        {/* FINAL RESULT */}
-        {
-            agentState === "disconnected" && (
-                <FinalResultOAI setAgentState={setAgentState} text={assesment} userUnpaid={userUnpaid}/>
-            )
-        }
-
         </div>
     );
 }
