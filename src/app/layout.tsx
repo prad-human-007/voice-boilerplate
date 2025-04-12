@@ -6,8 +6,8 @@ import "@livekit/components-styles";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "VisaPrepAi",
-  description: "Mock Visa Interview uisng AI!",
+  title: "Survey Monk",
+  description: "Better Surveys",
 };
 
 export default function RootLayout({
