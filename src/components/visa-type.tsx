@@ -27,11 +27,8 @@ export function VisaTypeSelector({ type, setVisaType }: { type:string, setVisaTy
         <DropdownMenuLabel>Visa Type</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuRadioGroup value={position} onValueChange={setPosition}>
-          <DropdownMenuRadioItem onClick={() => {setVisaType('F1 Visa')}} value="F1 Visa">F1</DropdownMenuRadioItem>
-          <DropdownMenuRadioItem onClick={() => {setVisaType('B1/B2 Visa')}} value="B1/B2 Visa">B1/B2</DropdownMenuRadioItem>
-          <DropdownMenuRadioItem onClick={() => {setVisaType('Schengen Visa')}} value="Schengen Visa">Schengen</DropdownMenuRadioItem>
-          <DropdownMenuRadioItem onClick={() => {setVisaType('IELTS')}} value="IELTS">IELTS</DropdownMenuRadioItem>
-          <DropdownMenuRadioItem onClick={() => {setVisaType('TOFEL')}} value="TOFEL">TOFEL</DropdownMenuRadioItem>
+          <DropdownMenuRadioItem onClick={() => {setVisaType('McDonalds')}} value="McDonalds">McDonalds</DropdownMenuRadioItem>
+          <DropdownMenuRadioItem onClick={() => {setVisaType('Nike')}} value="Nike">Nike</DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenu>

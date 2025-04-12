@@ -37,7 +37,7 @@ export default function Voice() {
     const [messages, setMessages] = useState<Msg[]>([]);
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
     const [agentState, setAgentState] = useState<AgentState>("preconnected");
-    const [ visaType, setVisaType]  = useState('F1 Visa')
+    const [ visaType, setVisaType]  = useState('McDonalds')
     
 
     useEffect(() => {
@@ -289,7 +289,7 @@ export default function Voice() {
                             <Button 
                                 className={`connect-button uppercase border border-gray-500 [box-shadow:0.0rem_0.25rem_#000] ${false? 'translate-x-[+0.25rem] translate-y-[+0.25rem] [box-shadow:0.0rem_0.0rem_#000] bg-blue-600': 'bg-blue-500'} hover:bg-blue-600`}
                                 onClick={init}>
-                                Start Interview
+                                Start Demo
                             </Button>
                             <VisaTypeSelector type={visaType} setVisaType={setVisaType}/>
                         </div>
