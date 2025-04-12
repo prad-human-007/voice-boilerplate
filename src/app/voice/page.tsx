@@ -2,17 +2,8 @@
 import { useEffect, useRef, useState } from "react";
 import { CircleOut } from "@/components/livekit/audioAnim/circleOut";
 import { Button } from "@/components/ui/button";
-import { UserDropdown } from "@/components/home/user-dropdown";
-import { User } from "@supabase/supabase-js";
-import { createClient } from "@/utils/supabase/client";
-import { useRouter } from "next/navigation";
-import { FinalResultOAI } from "@/components/livekit/FinalResultOAI";
-import { VisaInterviewFeedback } from "@/zod/VisaInterviewFeedback";
-import { z } from "zod";
 import { DotStream, DotPulse } from "@/components/ui/Loaders";
-import Image from "next/image";
 import { VisaTypeSelector } from "@/components/visa-type";
-
 
 interface Msg {
     type: string
@@ -32,11 +23,7 @@ interface AgentInput {
 
 export type AgentState = "preconnected" | "connecting" | "connected" | "disconnected";
 
-
-
 export default function Voice() {
-    // AUTH 
-    const router = useRouter();
     // Timer
     const waitTime = Number(process.env.NEXT_PUBLIC_INTERVIEW_TIME)
     const [time, setTime] = useState(waitTime); 
@@ -50,8 +37,6 @@ export default function Voice() {
     const [messages, setMessages] = useState<Msg[]>([]);
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
     const [agentState, setAgentState] = useState<AgentState>("preconnected");
-    const [ assesment, setAssesment ] = useState<z.infer<typeof VisaInterviewFeedback> |  null>(null)
-    const [ userUnpaid, setUserUnpaid ] = useState(false);
     const [ visaType, setVisaType]  = useState('F1 Visa')
     
 
@@ -60,8 +45,6 @@ export default function Voice() {
             resetVariables();
             resetTimer();
             setMessages([]);
-            setAssesment(null);
-            setUserUnpaid(false);
             setStream(null);
         }
         if(agentState === 'connected') {

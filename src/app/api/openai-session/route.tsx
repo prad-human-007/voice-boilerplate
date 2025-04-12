@@ -1,19 +1,7 @@
 import { NextResponse } from "next/server";
-import { createClient, User } from '@supabase/supabase-js';
 export const dynamic = 'force-dynamic';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const supabase = createClient(supabaseUrl!, supabaseKey!);
-let user: User | null  = null;
-let chatsLeft: number = 0;
-
-
-
 export async function POST(req: Request) {
-
-    
-
 
     const { visaType } = await req.json();
     let instructions = `Act like a US visa interview officer who will ask questions to the user. 
@@ -50,8 +38,6 @@ export async function POST(req: Request) {
     });
     const { client_secret } = await r.json();
 
-
     console.log("Client secret: ", client_secret);
-
     return NextResponse.json({ client_secret});
 }
