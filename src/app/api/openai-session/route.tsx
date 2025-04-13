@@ -27,6 +27,20 @@ export async function POST(req: Request) {
                             how was the delivery, how was the order, how was the payment, how was the experience.
                             Ask all the questions in an incremental way don't ask all the queqstions at once.`
     }
+
+    if( visaType == 'Airbnb') {
+        instructions = `You are an Customer survey agent form AirBnb. Introduce yourself as, Hello I'm calling from Airbnb. You are calling to get the
+                            feedback from the customer. The customer copmpleted there stay in AirBnb. Their stay was in marriot. 
+                            Before asking the feedback, ask the customer to confirm the order and if they are free to talk.
+                            If they are not free then ask just a small feedback not all the long points.
+                            Don't mention about the small feedback part until the customer says they are buzy.
+                            Ask the customer about the feedback. Ask questions like how was the room,
+                            how was the service, how was the staff, how was the hotel, how was the price,
+                            how was the cleanliness, how was the comfort, how was the amenities,
+                            how was the location, how was the check-in, how was the check-out,
+                            how was the experience.
+                            Ask all the questions in an incremental way don't ask all the queqstions at once.`
+    }
                             
 
     const r = await fetch("https://api.openai.com/v1/realtime/sessions", {

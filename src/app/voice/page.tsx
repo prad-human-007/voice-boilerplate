@@ -56,7 +56,6 @@ export default function Voice() {
 
     }, [agentState]);
 
-
     const startTimer = () => {
         if (timerRef.current || time<0) return;
 
@@ -81,7 +80,7 @@ export default function Voice() {
             })
         }, 1000)
     }
-    
+
     const resetTimer = () => {
         if(timerRef.current) {
             clearInterval(timerRef.current)
@@ -97,7 +96,7 @@ export default function Voice() {
         .toString()
         .padStart(2, "0")}`;
     };
-    
+
     function endSession() {
         setAgentState("preconnected");
         resetVariables();
@@ -278,10 +277,10 @@ export default function Voice() {
 
     return (
         <div className=" w-full h-screen">   
-            <div className="flex flex-col items-center gap-4 p-3 mt-4">
+            <div className="flex flex-row items-center justify-center  h-screen gap-10 p-3 mt-4">
                 
+            <div className="flex  flex-col items-center justify-center">
                 <CircleOut stream={stream}/>
-                
                 {/* Control Buttons */}
                 {
                     agentState === "preconnected" && (
@@ -313,23 +312,25 @@ export default function Voice() {
                         </div>
                     )
                 }
-                
-                {/* Messages */}
-                <div className="overflow-y-auto h-96 max-w-2xl w-full bg-white bg-opacity-30 shadow-2xl p-4 mt-2 rounded-lg">
-                    <div className="">
-                        {messages.map((m) => (
-                            <div className={`flex flex-col  gap-1 border-b-2 p-3`} key={m.event_id}>
-                                <h3 className={`text-lg ${m.type == 'Agent'? 'text-red-600 ': 'text-black text-right'}`}>{m.type} Message</h3>
-                                <p className={`flex text-gray-600 italic ${m.type == 'Agent'? '': 'text-right justify-end '}`}>{ m.transcript || <DotStream color="#1E88E5"/>}</p>
-                                <div className={`w-full `}></div>
-                            </div>
-                        ))}
-                        <div ref={messagesEndRef} />
-                    </div>
+            </div>
+
+            {/* Messages */}
+            <div className="overflow-y-auto h-96 max-w-2xl w-full bg-white bg-opacity-30 shadow-2xl p-4 mt-2 rounded-lg">
+                <div className="">
+                    {messages.map((m) => (
+                        <div className={`flex flex-col  gap-1 border-b-2 p-3`} key={m.event_id}>
+                            <h3 className={`text-lg ${m.type == 'Agent'? 'text-red-600 ': 'text-black text-right'}`}>{m.type} Message</h3>
+                            <p className={`flex text-gray-600 italic ${m.type == 'Agent'? '': 'text-right justify-end '}`}>{ m.transcript || <DotStream color="#1E88E5"/>}</p>
+                            <div className={`w-full `}></div>
+                        </div>
+                    ))}
+                    <div ref={messagesEndRef} />
                 </div>
+            </div>
                 
-                <audio ref={audioRef} autoPlay />
-                <audio ref={endAudioRef} src="/assets/aivoice.mp3"/>
+            <audio ref={audioRef} autoPlay />
+            <audio ref={endAudioRef} src="/assets/aivoice.mp3"/>
+            
             </div>
         </div>
     );

@@ -29,6 +29,7 @@ export function VisaTypeSelector({ type, setVisaType }: { type:string, setVisaTy
         <DropdownMenuRadioGroup value={position} onValueChange={setPosition}>
           <DropdownMenuRadioItem onClick={() => {setVisaType('McDonalds')}} value="McDonalds">McDonalds</DropdownMenuRadioItem>
           <DropdownMenuRadioItem onClick={() => {setVisaType('Nike')}} value="Nike">Nike</DropdownMenuRadioItem>
+          <DropdownMenuRadioItem onClick={() => {setVisaType('Airbnb')}} value="Airbnb">Airbnb</DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenu>
